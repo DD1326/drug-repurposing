@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-powered Drug Repurposing Intelligence Platform — discover new therapeutic uses for existing molecules.">
+    <title>DrugRepur — Drug Repurposing Intelligence Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-brand">
+            <span class="nav-icon">💊</span>
+            <span class="nav-title">DrugRepur</span>
+        </div>
+        <div class="nav-links">
+            <a href="#" class="nav-link active" data-section="scanner">Analyzer</a>
+            <a href="#" class="nav-link" data-section="history">History</a>
+            <a href="#" class="nav-link" data-section="about">About</a>
+        </div>
+        <div class="nav-status">
+            <span class="status-dot" id="statusDot"></span>
+            <span class="status-text" id="statusText">Ready</span>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="heroSection">
+        <div class="hero-particles" id="heroParticles"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">
+                Drug Repurposing
+                <span class="gradient-text">Intelligence Platform</span>
+            </h1>
+            <p class="hero-subtitle">
+                AI-powered cross-domain analysis — synthesizing clinical trials, research papers, 
+                and patent data to discover new therapeutic opportunities.
+            </p>
+
+            <!-- Search Form -->
+            <form class="search-form" id="searchForm">
+                <div class="search-wrapper">
+                    <div class="search-icon">🔬</div>
+                    <input 
+                        type="text" 
+                        id="moleculeInput" 
+                        class="search-input"
+                        placeholder="Enter a drug molecule name (e.g., Aspirin, Metformin, Thalidomide)"
+                        autocomplete="off"
+                        required
+                    >
+                    <button type="submit" class="search-btn" id="searchBtn">
+                        <span class="btn-text">Analyze</span>
+                        <span class="btn-loader" id="btnLoader"></span>
+                    </button>
+                </div>
+                <div class="quick-picks">
+                    <span class="quick-label">Try:</span>
+                    <button type="button" class="quick-btn" data-molecule="Aspirin">Aspirin</button>
+                    <button type="button" class="quick-btn" data-molecule="Metformin">Metformin</button>
+                    <button type="button" class="quick-btn" data-molecule="Thalidomide">Thalidomide</button>
+                    <button type="button" class="quick-btn" data-molecule="Sildenafil">Sildenafil</button>
+                    <button type="button" class="quick-btn" data-molecule="Rapamycin">Rapamycin</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Loading State -->
+    <section class="loading-section" id="loadingSection" style="display: none;">
+        <div class="loading-container">
+            <div class="dna-loader">
+                <div class="dna-strand"></div>
+                <div class="dna-strand"></div>
+            </div>
+            <h2 class="loading-title">Analyzing <span id="loadingMolecule"></span></h2>
+            <div class="loading-steps" id="loadingSteps">
+                <div class="loading-step" data-step="1">
+                    <div class="step-indicator"></div>
+                    <span>Searching PubMed research papers...</span>
+                </div>
+                <div class="loading-step" data-step="2">
+                    <div class="step-indicator"></div>
+                    <span>Querying ClinicalTrials.gov...</span>
+                </div>
+                <div class="loading-step" data-step="3">
+                    <div class="step-indicator"></div>
+                    <span>Scanning patent databases...</span>
+                </div>
+                <div class="loading-step" data-step="4">
+                    <div class="step-indicator"></div>
+                    <span>Running AI cross-domain analysis...</span>
+                </div>
+                <div class="loading-step" data-step="5">
+                    <div class="step-indicator"></div>
+                    <span>Generating innovation report...</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Dashboard -->
+    <section class="dashboard" id="dashboard" style="display: none;">
+        <!-- Report Header -->
+        <div class="report-header" id="reportHeader">
+            <div class="report-meta">
+                <h2 class="report-title">
+                    Innovation Report: <span id="reportMolecule"></span>
+                </h2>
+                <div class="report-badges">
+                    <span class="badge" id="confidenceBadge">Confidence: —</span>
+                    <span class="badge badge-secondary" id="reportIdBadge">ID: —</span>
+                    <span class="badge badge-secondary" id="reportTimeBadge">Generated: —</span>
+                </div>
+            </div>
+            <button class="btn-new-search" id="newSearchBtn">← New Search</button>
+        </div>
+
+        <!-- Executive Summary -->
+        <div class="card card-summary" id="executiveSummaryCard">
+            <div class="card-header">
+                <span class="card-icon">📋</span>
+                <h3>Executive Summary</h3>
+            </div>
+            <p class="card-body" id="executiveSummary"></p>
+        </div>
+
+        <!-- Data Sources Stats -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-number" id="statPapers">0</div>
+                <div class="stat-label">Research Papers</div>
+                <div class="stat-source">PubMed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statTrials">0</div>
+                <div class="stat-label">Clinical Trials</div>
+                <div class="stat-source">ClinicalTrials.gov</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statPatents">0</div>
+                <div class="stat-label">Patent Records</div>
+                <div class="stat-source">Google Patents</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statOpportunities">0</div>
+                <div class="stat-label">Opportunities</div>
+                <div class="stat-source">AI Analysis</div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="cards-grid">
+            <!-- Clinical Status -->
+            <div class="card" id="clinicalCard">
+                <div class="card-header">
+                    <span class="card-icon">🏥</span>
+                    <h3>Clinical Status</h3>
+                </div>
+                <div class="card-body" id="clinicalBody"></div>
+            </div>
+
+            <!-- Patent Landscape -->
+            <div class="card" id="patentCard">
+                <div class="card-header">
+                    <span class="card-icon">📜</span>
+                    <h3>Patent Landscape</h3>
+                </div>
+                <div class="card-body" id="patentBody"></div>
+            </div>
+
+            <!-- Regulatory Status -->
+            <div class="card" id="regulatoryCard">
+                <div class="card-header">
+                    <span class="card-icon">⚖️</span>
+                    <h3>Regulatory Status</h3>
+                </div>
+                <div class="card-body" id="regulatoryBody"></div>
+            </div>
+
+            <!-- Market Analysis -->
+            <div class="card" id="marketCard">
+                <div class="card-header">
+                    <span class="card-icon">📊</span>
+                    <h3>Market Analysis</h3>
+                </div>
+                <div class="card-body" id="marketBody"></div>
+            </div>
+        </div>
+
+        <!-- Repurposing Opportunities (full-width) -->
+        <div class="card card-full" id="repurposingCard">
+            <div class="card-header">
+                <span class="card-icon">🎯</span>
+                <h3>Repurposing Opportunities</h3>
+            </div>
+            <div class="card-body" id="repurposingBody"></div>
+        </div>
+
+        <!-- Raw Data Accordion -->
+        <div class="card card-full" id="rawDataCard">
+            <div class="card-header card-header-toggle" id="rawDataToggle">
+                <span class="card-icon">📁</span>
+                <h3>Source Data</h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-body card-body-collapsible" id="rawDataBody" style="display: none;"></div>
+        </div>
+    </section>
+
+    <!-- Error State -->
+    <section class="error-section" id="errorSection" style="display: none;">
+        <div class="error-container">
+            <div class="error-icon">⚠️</div>
+            <h2>Analysis Failed</h2>
+            <p id="errorMessage"></p>
+            <button class="btn-new-search" id="errorRetryBtn">Try Again</button>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>Drug Repurposing Intelligence Platform &copy; 2026 — SVCE CSE</p>
+    </footer>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

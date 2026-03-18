@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.env
+.idea/
+.vscode/
+node_modules/
+generated_reports/
+data/raw/
+logs/
+*.log
