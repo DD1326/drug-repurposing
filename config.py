@@ -22,18 +22,22 @@ class Config:
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
     OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
+    # Google Gemini
+    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+    GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+
     # PubMed E-Utilities
     PUBMED_BASE_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
     PUBMED_API_KEY = os.getenv("PUBMED_API_KEY", "")
-    PUBMED_MAX_RESULTS = int(os.getenv("PUBMED_MAX_RESULTS", 10))
+    PUBMED_MAX_RESULTS = int(os.getenv("PUBMED_MAX_RESULTS", 25))
 
     # ClinicalTrials.gov v2
     CLINICAL_TRIALS_BASE_URL = "https://clinicaltrials.gov/api/v2"
-    CLINICAL_TRIALS_MAX_RESULTS = int(os.getenv("CT_MAX_RESULTS", 10))
+    CLINICAL_TRIALS_MAX_RESULTS = int(os.getenv("CT_MAX_RESULTS", 25))
 
     # Google Patents
     PATENTS_SEARCH_URL = "https://patents.google.com"
-    PATENTS_MAX_RESULTS = int(os.getenv("PATENTS_MAX_RESULTS", 10))
+    PATENTS_MAX_RESULTS = int(os.getenv("PATENTS_MAX_RESULTS", 15))
 
     # Task Manager
     MAX_WORKERS = int(os.getenv("MAX_WORKERS", 4))

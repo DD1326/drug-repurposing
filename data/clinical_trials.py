@@ -14,14 +14,15 @@ class ClinicalTrialsConnector:
         self.base_url = Config.CLINICAL_TRIALS_BASE_URL
         self.max_results = Config.CLINICAL_TRIALS_MAX_RESULTS
 
-    def search(self, molecule: str) -> list:
+    def search(self, molecule: str) -> dict:
         """
         Search ClinicalTrials.gov for trials involving the molecule.
-        Returns a list of dicts with nct_id, title, status, phase, conditions, enrollment.
+        Returns a dict with 'results' (list) and 'total_count' (int).
         """
         params = {
             "query.term": molecule,
             "pageSize": self.max_results,
+            "countTotal": "true",
             "format": "json",
         }
 
@@ -31,10 +32,13 @@ class ClinicalTrialsConnector:
             )
             resp.raise_for_status()
             data = resp.json()
-            return self._parse_response(data)
+            return {
+                "results": self._parse_response(data),
+                "total_count": data.get("totalCount", 0)
+            }
         except Exception as e:
             print(f"[ClinicalTrials] Search error: {e}")
-            return []
+            return {"results": [], "total_count": 0}
 
     def _parse_response(self, data: dict) -> list:
         """Parse ClinicalTrials.gov v2 API response."""

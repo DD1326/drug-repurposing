@@ -16,25 +16,37 @@ class PubMedConnector:
         self.api_key = Config.PUBMED_API_KEY
         self.max_results = Config.PUBMED_MAX_RESULTS
 
-    def search(self, molecule: str) -> list:
+    def search(self, molecule: str) -> dict:
         """
         Search PubMed for papers related to the molecule.
-        Returns a list of dicts with title, abstract, pmid, authors, date.
+        Returns a dict with 'results' (list) and 'total_count' (int).
         """
-        # Step 1: ESearch to get PMIDs
-        pmids = self._esearch(molecule)
+        # Clean molecule name (basic)
+        molecule_clean = molecule.strip()
+        
+        # Step 1: ESearch to get PMIDs and total count
+        pmids, total_count = self._esearch(molecule_clean)
+        
+        # If no results, try without the restrictive "repurposing" tags
         if not pmids:
-            return []
+            pmids, total_count = self._esearch(molecule_clean, restrictive=False)
+            
+        if not pmids:
+            return {"results": [], "total_count": 0}
 
         # Step 2: EFetch to get article details
         articles = self._efetch(pmids)
-        return articles
+        return {"results": articles, "total_count": total_count}
 
-    def _esearch(self, query: str) -> list:
-        """Search PubMed and return list of PMIDs."""
+    def _esearch(self, query: str, restrictive: bool = True) -> tuple:
+        """Search PubMed and return (list of PMIDs, total count)."""
+        search_term = f'("{query}"[Title/Abstract])'
+        if restrictive:
+            search_term += " AND (drug repurposing OR pharmacology OR therapeutic OR trial)"
+            
         params = {
             "db": "pubmed",
-            "term": f"{query} AND (drug repurposing OR pharmacology OR therapeutic)",
+            "term": search_term,
             "retmax": self.max_results,
             "retmode": "json",
             "sort": "relevance",
@@ -48,10 +60,14 @@ class PubMedConnector:
             )
             resp.raise_for_status()
             data = resp.json()
-            return data.get("esearchresult", {}).get("idlist", [])
+            esearchresult = data.get("esearchresult", {})
+            return (
+                esearchresult.get("idlist", []),
+                int(esearchresult.get("count", "0"))
+            )
         except Exception as e:
             print(f"[PubMed] ESearch error: {e}")
-            return []
+            return [], 0
 
     def _efetch(self, pmids: list) -> list:
         """Fetch article details for a list of PMIDs."""

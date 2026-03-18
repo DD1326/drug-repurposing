@@ -39,15 +39,15 @@ class ReportGenerator:
                 "repurposing_opportunities": analysis.get("repurposing_opportunities", []),
             },
             "raw_data": {
-                "research_papers": raw_data.get("research_papers", []),
-                "clinical_trials": raw_data.get("clinical_trials", []),
-                "patents": raw_data.get("patents", []),
+                "research_papers": raw_data.get("research_papers", {}).get("results", []),
+                "clinical_trials": raw_data.get("clinical_trials", {}).get("results", []),
+                "patents": raw_data.get("patents", {}).get("results", []),
             },
             "citations": citations,
             "data_sources": {
-                "pubmed_articles": len(raw_data.get("research_papers", [])),
-                "clinical_trials": len(raw_data.get("clinical_trials", [])),
-                "patent_records": len(raw_data.get("patents", [])),
+                "pubmed_articles": raw_data.get("research_papers", {}).get("total_count", 0),
+                "clinical_trials": raw_data.get("clinical_trials", {}).get("total_count", 0),
+                "patent_records": raw_data.get("patents", {}).get("total_count", 0),
             },
             "errors": raw_data.get("_errors", {}),
         }

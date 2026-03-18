@@ -18,7 +18,9 @@ class CitationEngine:
         citations = {}
 
         # PubMed citations
-        for paper in data.get("research_papers", []):
+        pubmed_data = data.get("research_papers", {})
+        results = pubmed_data.get("results", []) if isinstance(pubmed_data, dict) else pubmed_data
+        for paper in results:
             pmid = paper.get("pmid", "")
             if pmid:
                 citations[f"PMID:{pmid}"] = {
@@ -30,7 +32,9 @@ class CitationEngine:
                 }
 
         # Clinical trial citations
-        for trial in data.get("clinical_trials", []):
+        trials_data = data.get("clinical_trials", {})
+        results = trials_data.get("results", []) if isinstance(trials_data, dict) else trials_data
+        for trial in results:
             nct_id = trial.get("nct_id", "")
             if nct_id:
                 citations[nct_id] = {
@@ -42,7 +46,9 @@ class CitationEngine:
                 }
 
         # Patent citations
-        for patent in data.get("patents", []):
+        patents_data = data.get("patents", {})
+        results = patents_data.get("results", []) if isinstance(patents_data, dict) else patents_data
+        for patent in results:
             pat_id = patent.get("patent_id", "")
             if pat_id and pat_id != "search-required":
                 citations[pat_id] = {

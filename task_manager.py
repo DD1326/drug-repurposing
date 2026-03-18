@@ -28,7 +28,8 @@ class TaskManager:
             "patents": PatentScraper().search,
         }
 
-        results = {}
+        from typing import Any
+        results: dict[str, Any] = {}
         errors = {}
 
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
@@ -43,7 +44,7 @@ class TaskManager:
                     results[task_name] = future.result()
                 except Exception as e:
                     errors[task_name] = str(e)
-                    results[task_name] = []
+                    results[task_name] = {"results": [], "total_count": 0}
 
         if errors:
             results["_errors"] = errors
