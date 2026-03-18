@@ -104,7 +104,7 @@ Return your analysis AS VALID JSON ONLY with these exact keys:
         {"indication": "...", "evidence_strength": "low/medium/high", "rationale": "...", "sources": ["..."]}
     ],
     "overall_confidence": "low/medium/high",
-    "executive_summary": "..."
+    "executive_summary": "Start with a sentence like: 'Our analysis of [X] research papers, [Y] clinical trials, and [Z] patents reveals...' using the total counts provided in the data headers."
 }"""
 
         user_prompt = f"""Analyze the following data for the molecule: {molecule}
@@ -117,9 +117,17 @@ Provide your analysis as the specified JSON structure."""
 
     def _rule_based_analysis(self, molecule: str, data: dict) -> dict:
         """Rule-based fallback analysis when no API key is available."""
-        papers = data.get("research_papers", {}).get("results", [])
-        trials = data.get("clinical_trials", {}).get("results", [])
-        patents = data.get("patents", {}).get("results", [])
+        papers_data = data.get("research_papers", {})
+        trials_data = data.get("clinical_trials", {})
+        patents_data = data.get("patents", {})
+
+        papers = papers_data.get("results", [])
+        trials = trials_data.get("results", [])
+        patents = patents_data.get("results", [])
+
+        total_papers = papers_data.get("total_count", 0)
+        total_trials = trials_data.get("total_count", 0)
+        total_patents = patents_data.get("total_count", 0)
 
         # Clinical status analysis
         active_trials = [t for t in trials if t.get("status") in ("RECRUITING", "ACTIVE_NOT_RECRUITING", "ENROLLING_BY_INVITATION")]
@@ -222,8 +230,8 @@ Provide your analysis as the specified JSON structure."""
             }],
             "overall_confidence": "high" if len(trials) > 5 and len(papers) > 5 else "medium" if trials or papers else "low",
             "executive_summary": (
-                f"Analysis of {molecule}: {len(papers)} research paper(s), {len(trials)} clinical trial(s), "
-                f"and {len(patents)} patent record(s) were retrieved. "
+                f"Analysis of {molecule}: {total_papers} research paper(s), {total_trials} clinical trial(s), "
+                f"and {total_patents} patent record(s) were retrieved. "
                 f"{molecule} shows {'extensive' if len(unique_conditions) > 3 else 'targeted'} clinical activity "
                 f"across {len(unique_conditions)} therapeutic area(s). "
                 + (f"The largest clinical trial detected is {trials[0].get('title')[:60]}... (ID: {trials[0].get('nct_id')})." if trials else "No specific clinical trials were highlighted for this summary.") +
